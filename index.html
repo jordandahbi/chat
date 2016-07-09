@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			background-color:#FFFF00;
+		}
+		#output {
+			background-color:#FFFFFF;
+			width: 500px;
+			height: 200px;
+			margin:10px;
+			padding:10px;
+			overflow-y: scroll;
+		}
+		#output p{
+			margin:0px;
+		}
+		#prompt {
+			margin: 10px;
+		}
+	</style>
+	<title>Chat</title>
+</head>
+<body>
+	<h1>Chat</h1>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	
+	<section>
+		<div id="output"></div>
+		<input type="text" id="prompt" />
+		<button id="hello">Envoyer</button>
+	</section>
+
+	<script>
+		var socket = io.connect('http://localhost:8080');
+		
+		socket.on('connect',function(){
+			var pseudo = prompt("Saisissez votre pseudo");
+			socket.pseudo = pseudo;
+			socket.emit('envoi_pseudo',pseudo);
+		});
+		socket.on('envoi_pseudo_2',function(pseudo){
+			alert(pseudo+" s'est connecté !!!");
+		});
+		$('#hello').click(function(){
+			socket.emit('envoi_message',document.getElementById("prompt").value,socket.pseudo);
+			document.getElementById("prompt").value="";
+		});
+		socket.on('reenvoie_message',function(msg,pseudo){
+			$("#output").append("<p>"+pseudo+" : "+msg+"</p>");
+		});
+
+	</script>
+</body>
+</html>
